@@ -19,7 +19,7 @@ $('#printform').submit(function(e) {
   for (i = 0; i < items.length; i++) {
     var itemQuant = $(items[i]).val();
     if (itemQuant > 0) {
-      msgBody += items[i].id + ' = ' + itemQuant + '\n';
+      msgBody += items[i].id + ' = ' + itemQuant + '\n\n';
     }
   }
 
@@ -27,9 +27,11 @@ $('#printform').submit(function(e) {
   for (i = 0; i < customItems.length; i++) {
     var itemQuant = $(customItems[i]).val();
     if (itemQuant > 0) {
-      msgBody += $(customItemsFile[i]).val() + ' = ' + itemQuant + '\n';
+      msgBody += $(customItemsFile[i]).val() + ' = ' + itemQuant + '\n\n';
     }
   }
+
+  msgBody += "custom text: \n" + $('#freetext').val();
 
   console.log(msgBody);
   $('#textdo').val(msgBody);
@@ -37,6 +39,7 @@ $('#printform').submit(function(e) {
   
   console.log(data);
   $.post( "test.php",  data, function() {console.log('yay', arguments)});
-
-
+  $('#thanks').remove();
+  var successhtml = '<h2 id="thanks">Thanks! We got your print order! We will email you when its done.</h2>'
+  $('#wrap').append(successhtml);
 });
