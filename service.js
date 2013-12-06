@@ -36,7 +36,7 @@ http.createServer(function(req, res) {
           if (err) {
             res.writeHead(400);
             res.end((err && err.message) ? err.message : 'unknown error');
-            console.log(console.log('Oh noes: ' + err);)
+            console.log(console.log('Oh noes: ' + err))
           } else {
             console.log('mail sent on behalf of', data.from);
             res.end('ok');
@@ -45,6 +45,6 @@ http.createServer(function(req, res) {
       }
     });    
   }
-}).listen(8080)
+}).listen(80)
 
 
