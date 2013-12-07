@@ -10,7 +10,7 @@ body {
   border-radius: 12px;
   -moz-border-radius: 12px;
   background-color: #E0E4CC;
-  text-align:left;
+  /*text-align:left;*/
   position:relative;
   margin: 50px auto;
   padding: 50px 50px 100px 50px;
@@ -33,9 +33,9 @@ h2 {
   font-family: sans-serif;
   font-weight: normal;
   font-style: italic;
-  font-size: 40px;
+  font-size: 30px;
   color: #FF3D7F;
-  text-align: left;
+  text-align: center;
   margin-top:20px;
 }
 
