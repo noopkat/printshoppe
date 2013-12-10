@@ -1,45 +1,50 @@
 var nodesubmit = require("submit"),
     form = $('#printform'),
-    Mailgun = require('mailgun').Mailgun,
-    mg = new Mailgun('pubkey-5b09s06ygf5w-6aha4yvegnj3phg1pw2'),
-    formData = {},
     i;
 
 $('#printform').submit(function(e) {
   e.preventDefault();
-  console.log(e);
-  items = $('.item select');
-  itemLen = items.length,
-  customItems = $('.customitem select'),
-  customItemsLen = customItems.length,
-  customItemsFile = $('.customitem .customfile'),
-  msgBody = '';
+  
+  var items           = $('.item select'),
+      itemLen         = items.length,
+      customItems     = $('.customitem select'),
+      customItemsLen  = customItems.length,
+      customItemsFile = $('.customitem .customfile'),
+      freetext        = $('#freetext').val(),
+      msgBody         = '';
+
 
   // ala cart
-  for (i = 0; i < items.length; i++) {
+  for (i = 0; i < itemLen; i++) {
     var itemQuant = $(items[i]).val();
     if (itemQuant > 0) {
-      msgBody += items[i].id + ' = ' + itemQuant + '\n\n';
+      msgBody += items[i].id + ' x ' + itemQuant + '\n\n';
     }
   }
 
   // custom
-  for (i = 0; i < customItems.length; i++) {
+  for (i = 0; i < customItemsLen; i++) {
     var itemQuant = $(customItems[i]).val();
     if (itemQuant > 0) {
-      msgBody += $(customItemsFile[i]).val() + ' = ' + itemQuant + '\n\n';
+      msgBody += $(customItemsFile[i]).val() + ' x ' + itemQuant + '\n\n';
     }
   }
-
-  msgBody += "custom text: \n" + $('#freetext').val();
-
+  
+  if (freetext != '') {
+    msgBody += "Additional notes: \n" + freetext;
+  }
+  
   console.log(msgBody);
   $('#textdo').val(msgBody);
-  var data = $( 'form' ).serialize();
+  
+  var data = $('form').serialize();
   
   console.log(data);
-  $.post( "test.php",  data, function() {console.log('yay', arguments)});
+  
+  $.post( "/",  data, function() {console.log('yay', arguments)});
+  
   $('#thanks').remove();
-  var successhtml = '<h2 id="thanks">Thanks! We got your print order! We will email you when its done.</h2>'
+  var successhtml = "<h2 id='thanks'>Thanks, we got your print order! We will email you when it's ready to pick up.</h2>"
   $('#wrap').append(successhtml);
+  
 });
