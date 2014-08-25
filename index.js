@@ -1,5 +1,6 @@
 var Hapi = require('hapi');
 var https = require('https');
+var config = require('./config');
 
 // Create a server with a host and port
 var server = new Hapi.Server('localhost', 8000);
@@ -12,7 +13,7 @@ function getOrg(username, fn) {
     path: '/users/' + username + '/orgs',
     port : 443,
     method : 'GET',
-    headers: {'User-Agent': 'noopkat'}
+    headers: {'User-Agent': config.userAgent}
   };
 
   var reqGet = https.request(options, function(res) {
@@ -37,16 +38,16 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
   // bell registration with github auth
   server.auth.strategy('github', 'bell', {
       provider: 'github',
-      password: '',
-      clientId: '',
-      clientSecret: '',
+      password: config.githubPass,
+      clientId: config.githubClientId,
+      clientSecret: config.githubClientSecret,
       scope: ['read:org'],
       isSecure: false     // Terrible idea but required if not using HTTPS
   });
 
   // hapi-auth-cookie registration
   server.auth.strategy('session', 'cookie', {
-      password: '',
+      password: config.authCookiePass,
       cookie: 'sid-printshoppe',
       redirectTo: '/login',
       isSecure: false
@@ -93,13 +94,10 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     method: 'GET',
     path: '/',
     config: {       
-      auth: {
-          mode: 'try',
-          strategy: 'session'
+      auth: 'session',
+      handler: function (request, reply) {
+        reply('login worked, put app here');
       }
-    },
-    handler: function (request, reply) {
-      reply('login worked, put app here');
     }
   });
 
@@ -108,15 +106,12 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     method: 'GET',
     path: '/logout',
     config: {       
-      auth: {
-          mode: 'try',
-          strategy: 'session'
+      auth: 'session',
+      handler: function (request, reply) {
+        request.auth.session.clear();
+        reply('you are now logged out.');
       }
-    },
-    handler: function (request, reply) {
-      request.auth.session.clear();
-      reply('you are now logged out.');
-    }
+    }    
   });
 
   // Start the server
