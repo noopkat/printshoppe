@@ -1,12 +1,10 @@
 {
   "name": "printshoppe",
   "description": "print request queue",
-  "author": "Suz Hinton <susan@owlposse.com>",
+  "author": "Suz Hinton <suz@noopkat.com>",
   "dependencies": {
     "browserify": ">= 0.1.0",
-    "submit": ">= 1.0.2",
     "hapi": "~6.6.0",
-    "badge": "~1.0.3",
     "bell": "~1.1.0",
     "hapi-auth-cookie": "~1.3.2"
   },
