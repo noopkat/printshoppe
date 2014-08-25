@@ -1,9 +1,22 @@
+var Path = require('path');
 var Hapi = require('hapi');
 var https = require('https');
 var config = require('./config');
 
+var serverOptions = {
+    views: {
+        engines: {
+          html: {
+            module: require('handlebars'),
+            compileMode: 'sync'
+          }
+        },
+        path: Path.join(__dirname, 'templates')
+    }
+};
+
 // Create a server with a host and port
-var server = new Hapi.Server('localhost', 8000);
+var server = new Hapi.Server(8000, serverOptions);
 
 // hit github api and get organisation of authenticated user
 function getOrg(username, fn) {
