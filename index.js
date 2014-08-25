@@ -4,15 +4,15 @@ var https = require('https');
 var config = require('./config');
 
 var serverOptions = {
-    views: {
-        engines: {
-          html: {
-            module: require('handlebars'),
-            compileMode: 'sync'
-          }
-        },
-        path: Path.join(__dirname, 'templates')
-    }
+  views: {
+      engines: {
+        html: {
+          module: require('handlebars')
+        }
+      },
+      path: Path.join(__dirname, 'templates'),
+      partialsPath: __dirname + '/templates'
+  }
 };
 
 // Create a server with a host and port
@@ -109,7 +109,7 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     config: {       
       auth: 'session',
       handler: function (request, reply) {
-        reply('login worked, put app here');
+        reply.view('index', {message: '~ welcome to print shoppe ~'});
       }
     }
   });
