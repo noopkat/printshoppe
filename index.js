@@ -78,7 +78,7 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
             if (!!partofOrg) {
               // set cookie and redirect to app
               request.auth.session.set({sid: username});
-              reply.redirect('/hello');
+              reply.redirect('/');
             } else {
               // tell em to get lost
               reply.redirect('/bum');
@@ -91,7 +91,7 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
 
   server.route({
     method: 'GET',
-    path: '/hello',
+    path: '/',
     config: {       
       auth: {
           mode: 'try',

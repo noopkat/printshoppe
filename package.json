@@ -6,7 +6,9 @@
     "browserify": ">= 0.1.0",
     "hapi": "~6.6.0",
     "bell": "~1.1.0",
-    "hapi-auth-cookie": "~1.3.2"
+    "hapi-auth-cookie": "~1.3.2",
+    "levelup": "~0.18.6",
+    "leveldown": "~0.10.2"
   },
   "engines": {
     "node": ">= 0.10.0"
