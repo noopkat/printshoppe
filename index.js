@@ -10,8 +10,8 @@ var serverOptions = {
           module: require('handlebars')
         }
       },
-      path: Path.join(__dirname, 'templates'),
-      partialsPath: __dirname + '/templates'
+      path: Path.join(__dirname, '/public/templates/'),
+      partialsPath: __dirname + '/public/templates/'
   }
 };
 
