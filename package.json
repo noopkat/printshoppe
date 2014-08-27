@@ -10,7 +10,8 @@
     "levelup": "~0.18.6",
     "leveldown": "~0.10.2",
     "level-object": "0.0.0",
-    "handlebars": "~2.0.0-alpha.4"
+    "handlebars": "~2.0.0-alpha.4",
+    "node-uuid": "~1.4.1"
   },
   "engines": {
     "node": ">= 0.10.0"
