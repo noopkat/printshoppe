@@ -39,3 +39,12 @@ var db = levelup('./ps-db')
 //     .on('data', function (data) {
 //       console.log(data.key, '=', data.value)
 //     });
+
+//db.put('job~1~date', '1409113079');
+
+    db.createReadStream()
+    .on('data', function (data) {
+      console.log(data.key, '=', data.value)
+    });
+  
+//})
