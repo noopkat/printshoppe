@@ -72,6 +72,17 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
       isSecure: false
   });
 
+  // route public js
+  server.route({
+    method: 'GET',
+    path: '/scripts/{param*}',
+    handler: {
+        directory: {
+            path: 'public/scripts'
+        }
+    }
+  });
+
   // Add the routes
   server.route({
     method: ['GET', 'POST'], 
@@ -115,7 +126,7 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     config: {       
       auth: 'session',
       handler: function (request, reply) {
-        reply.view('index', {message: '~ welcome to print shoppe ~'});
+        reply.view('queue', {message: '~ print shoppe queue is here ~'});
       }
     }
   });
@@ -144,5 +155,8 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
   });
 
   // Start the server
-  server.start();
+  server.start(function () {
+    console.log('Server running at:', server.info.uri);
+  });
+
 });

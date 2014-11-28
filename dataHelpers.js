@@ -5,7 +5,7 @@ var range = require('level-range');
 require('level-autotable')(db);
 var concat = require('concat-stream');
 
-db.initAutoKeys();
+db.initAutoKeys(function() {});
 
 var prefix = 'job~';
 
@@ -15,7 +15,7 @@ module.exports.getAllJobs = function getAllJobs(callback) {
     .pipe(concat(function(buffer) {
       var jobs = JSON.parse(buffer.toString());
       callback(null, jobs);
-    });
+    }));
 }
 
 module.exports.createJob = function createJob(data, callback) {

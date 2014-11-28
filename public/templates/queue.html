@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+  </head>
+<body>
+    {{> header}}
+    <div>
+      <p>{{message}}</p>
+    </div>
+    <div>
+      <table>
+        <thead>
+            <tr><th>Email</th><th>Status</th></tr>
+            <tbody data-bind="foreach: jobs">
+              <tr>
+                  <td data-bind="text: email"></td>
+                  <td data-bind="text: status"></td>
+              </tr>
+          </tbody>
+        </thead>
+
+      </table>
+
+    </div>
+    {{> footer}}
+
+    <script src="/scripts/vendor/jquery-1.11.1.min.js"></script>
+    <script src="/scripts/vendor/socket.io-1.2.1.js"></script>
+    <script src="/scripts/vendor/knockout-3.2.0.js"></script>
+
+    <script type="text/javascript">
+
+      var socket = io('http://localhost:8000');
+
+      function AppViewModel() {
+        var self = this;
+
+        self.jobs = ko.observableArray([
+          { email: 'suz@noopkat.com',
+            files: [ 'thing:13505', 'thing:152484' ],
+            message: 'only the first file for 8903 please',
+            status: 'pending' },
+
+          { email: 'elijah@noopkat.com',
+            files: [ 'thing:13505', 'thing:152484' ],
+            message: 'all files to be printed',
+            status: 'printing' },
+
+          { email: 'richard@noopkat.com',
+            files: [ 'thing:13505', 'thing:152484' ],
+            message: 'first file of each',
+            status: 'done' },
+
+            { email: 'lisa@noopkat.com',
+              files: [ 'thing:13505', 'thing:152484' ],
+              message: 'second file of each',
+              status: 'cancelled' }     
+        ]); 
+
+        socket.on('job:new', function(data) {
+          self.jobs.push(data);
+        });
+
+        var statusInput = $('.status');
+
+        statusInput.change(function() {
+          var data = {
+            'key': $(this).id,
+            'status': $(this).value
+          }
+          socket.emit('job:change:status', data);
+        });
+
+      } 
+
+      ko.applyBindings(new AppViewModel());
+    </script>
+
+  </body>
+</html>
