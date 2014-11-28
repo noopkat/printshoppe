@@ -2,3 +2,12 @@ node_modules
 config.js
 npm-debug.log
 ps-db
+ps-db/*
+*ps-db*
+*.ldb
+*.log
+LOG
+LOG.old
+*MANIFEST*
+CURRENT
+.DS_Store
