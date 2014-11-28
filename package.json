@@ -3,15 +3,20 @@
   "description": "print request queue",
   "author": "Suz Hinton <suz@noopkat.com>",
   "dependencies": {
-    "browserify": ">= 0.1.0",
-    "hapi": "~6.6.0",
+    "JSONStream": "^0.10.0",
     "bell": "~1.1.0",
-    "hapi-auth-cookie": "~1.3.2",
-    "levelup": "~0.18.6",
-    "leveldown": "~0.10.2",
-    "level-object": "0.0.0",
+    "browserify": ">= 0.1.0",
+    "concat-stream": "^1.4.7",
     "handlebars": "~2.0.0-alpha.4",
-    "node-uuid": "~1.4.1"
+    "hapi": "~6.6.0",
+    "hapi-auth-cookie": "~1.3.2",
+    "level-autotable": "0.0.5",
+    "level-object": "0.0.0",
+    "level-range": "0.0.0",
+    "leveldown": "~0.10.2",
+    "levelup": "~0.18.6",
+    "node-uuid": "~1.4.1",
+    "socket.io": "^1.2.1"
   },
   "engines": {
     "node": ">= 0.10.0"

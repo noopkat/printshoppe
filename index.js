@@ -2,6 +2,9 @@ var Path = require('path');
 var Hapi = require('hapi');
 var https = require('https');
 var config = require('./config');
+var dataHelpers = require('./dataHelpers');
+var notifications = require('./notifications');
+var app = require('./app');
 
 var serverOptions = {
   views: {
@@ -17,7 +20,10 @@ var serverOptions = {
 
 // Create a server with a host and port
 var server = new Hapi.Server(8000, serverOptions);
-
+var io = require('socket.io')(server.listener)
+  .on('connection', function (socket) {
+      socket.emit('server ready');
+  });
 // hit github api and get organisation of authenticated user
 function getOrg(username, fn) {
 
@@ -92,7 +98,7 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
             if (!!partofOrg) {
               // set cookie and redirect to app
               request.auth.session.set({sid: username});
-              reply.redirect('/');
+              reply.redirect('/queue');
             } else {
               // tell em to get lost
               reply.redirect('/bum');
@@ -105,9 +111,19 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
 
   server.route({
     method: 'GET',
-    path: '/',
+    path: '/queue',
     config: {       
       auth: 'session',
+      handler: function (request, reply) {
+        reply.view('index', {message: '~ welcome to print shoppe ~'});
+      }
+    }
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/',
+    config: {       
       handler: function (request, reply) {
         reply.view('index', {message: '~ welcome to print shoppe ~'});
       }
