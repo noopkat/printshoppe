@@ -2,8 +2,8 @@
 
 ## Install
 
-1. ```git clone``
-2. ```npm install``
+1. ```git clone```
+2. ```npm install```
 3. Create file config.js with requested secret gist
 4. ```node index.js```
 5. open browser
