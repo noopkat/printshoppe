@@ -15,7 +15,14 @@
             <tbody data-bind="foreach: jobs">
               <tr>
                   <td data-bind="text: email"></td>
-                  <td data-bind="text: status"></td>
+                  <td>
+                    <select class="status" data-bind="value: status, attr: { 'data-key': key, 'class': status }, statusChange: something">
+                      <option>pending</option>
+                      <option>printing</option>
+                      <option>done</option>
+                      <option>cancelled</option>
+                    </select>
+                  </td>
               </tr>
           </tbody>
         </thead>
@@ -26,37 +33,70 @@
     {{> footer}}
 
     <script src="/scripts/vendor/jquery-1.11.1.min.js"></script>
-    <script src="/scripts/vendor/socket.io-1.2.1.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts/vendor/knockout-3.2.0.js"></script>
 
     <script type="text/javascript">
 
-      var socket = io('http://localhost:8000');
+      var socket = io.connect('http://localhost:8000');
+
+      socket.on('job:change:status:done', function(data) {
+        console.log('appviewmodel status change');
+
+        this.currentJob = ko.computed(function() {
+          return ko.utils.arrayFilter(model.jobs(), function(Job) {
+            return Job.key === data.index;
+          });
+        });
+
+        this.currentJob()[0].status(data.status);
+
+      });
 
       function AppViewModel() {
         var self = this;
 
-        console.log({{{data}}});
         var jobData = {{{data}}};
+        console.log(jobData);
+        var observableList = []; 
 
-        self.jobs = ko.observableArray(jobData);
+        for (var i = 0; i < jobData.length; i ++) {
+          var status = jobData[i].status;
+          jobData[i].status = ko.observable(status); 
+          observableList.push(jobData[i]); 
+        }
+            
+        self.jobs = ko.observableArray(observableList);
 
         socket.on('job:new', function(data) {
           self.jobs.push(data);
         });
 
-        var statusInput = $('.status');
-
-        statusInput.change(function() {
-          var data = {
-            'key': $(this).id,
-            'status': $(this).value
+        ko.bindingHandlers.statusChange = {
+          init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+            var statusInput = $(element);
+            //console.log('binding change status');
+           
+            statusInput.change(function() {
+              var data = {
+                'index': $(this).attr('data-key'),
+                'key': 'job~' + $(this).attr('data-key'),
+                'status': $(this).val()
+              }
+              //console.log('change status', data);
+              socket.emit('job:change:status', data);
+            });
+              
           }
-          socket.emit('job:change:status', data);
-        });
+        };
+
       } 
 
-      ko.applyBindings(new AppViewModel());
+      var model = new AppViewModel();
+      console.log(model);
+
+      ko.applyBindings(model);
+
     </script>
 
   </body>

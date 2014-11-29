@@ -21,9 +21,21 @@ var serverOptions = {
 // Create a server with a host and port
 var server = new Hapi.Server(8000, serverOptions);
 var io = require('socket.io')(server.listener)
-  .on('connection', function (socket) {
+  .on('connection', function(socket) {
       socket.emit('server ready');
+      
+      socket.on('job:change:status', function(data) {
+        console.log('state change for', data.key, 'to', data.status);
+        dataHelpers.changeJobStatus(data.key, data.status, function(err) {
+          socket.broadcast.emit('job:change:status:done', data);
+          console.log(err);
+        });
+     });
   });
+
+  
+
+  
 // hit github api and get organisation of authenticated user
 function getOrg(username, fn) {
 
@@ -126,15 +138,13 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     config: {       
       auth: 'session',
       handler: function (request, reply) {
+        
+
         dataHelpers.getAllJobs(function(err, data) {
           reply.view('queue', {'message': '~ print shoppe queue is here ~', 'data': data});
+
         });
-        io.on('job:change:status', function(data) {
-          dataHelpers.changeJobStatus(data.key, data.status, function() {
-            console.log('state change for', data.key, 'to', data.status);
-          });
-          
-        });
+        
       }
     }
   });

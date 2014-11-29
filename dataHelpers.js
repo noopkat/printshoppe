@@ -37,9 +37,13 @@ module.exports.createJob = function createJob(data, callback) {
   }); 
 }
 
-module.exports.changeJobStatus = function changeJobStatus(key, state, callback) {
-  db.putField(key, 'state', state, {}, function(err) {
-    callback(err);
+module.exports.changeJobStatus = function changeJobStatus(key, status, callback) {
+  db.get(key, function(err, data) {
+    if (err) callback(err);
+    data.status = status;
+    db.put(key, data, function(err) {
+      callback(err);
+    })
   });
 }
 
