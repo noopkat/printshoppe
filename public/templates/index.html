@@ -2,84 +2,89 @@
 <html>
   <head>
     <title>{{title}}</title>
+    {{> headIncludes}}
 </head>
 <body>
+  <div class="container">
     {{> header}}
-    <div>
       <p>{{message}}</p>
-      <form id="printform" method="post" action="/create">
+      <form role="form" id="printform" method="post" action="/create">
+        <h3>What can we print for you?</h3>
 
-       <div class="customitem">
-          <h3>Custom items!</h3>
-        <label>Thingiverse link</label>
-        <input type="text" name="custom0" class="customfile"/>
-        <label>How many?</label>
-        <select name="custom0_quantity">
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-          <option>8</option>
-        </select>
-      </div>
-
-      <div class="customitem">
-     
-        <label>Thingiverse link</label>
-        <input type="text" name="custom1" class="customfile"/>
-        <label>How many?</label>
-        <select name="custom1_quantity">
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-          <option>8</option>
-        </select>
-      </div>
-
-      <div class="customitem">
        
-        <label>Thingiverse link</label>
-        <input type="text" name="custom2" class="customfile"/>
-        <label>How many?</label>
-        <select name="custom2_quantity">
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-          <option>7</option>
-          <option>8</option>
-        </select>
-      </div>
+            
+        <div class="form-group">
+          <label for="custom0">Thingiverse link</label>
+          <input type="text" name="custom0" id="custom0" class="customfile form-control" />
 
-      <hr/>
+          <label for="custom0_quantity">How many?</label>
+          <select name="custom0_quantity" id="custom0_quantity">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+          </select>
+        </div>
 
-      <div class="freefield">
-        <label>Your email address (so we can let you know when your order has printed!)</label>
-        <input type="text" class="email" name="email" value="" />
-      </div>
+        
+        <div class="form-group">
+          <label>Thingiverse link</label>
+          <input type="text" name="custom1" class="customfile form-control"/>
 
-      <div class="freefield">
-        <label>Type any information we need, like if you want a custom wheel size etc etc!</label>
-        <textarea name="freetext" id="freetext"></textarea>
-      </div>
+          <label>How many?</label>
+          <select name="custom1_quantity">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+          </select>
+        </div>
 
-      <input type="submit" value="Print me!"/>
+      
+        <div class="form-group">
+          <label>Thingiverse link</label>
+          <input type="text" name="custom2" class="customfile form-control"/>
+
+          <label>How many?</label>
+          <select name="custom2_quantity">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+          </select>
+        </div>
+
+      
+        <div class="form-group">
+          <label>Your email address (so we can let you know when your order has printed!)</label>
+          <input type="text" class="email form-control" name="email" value="" />
+        </div>
+
+        <div class="form-group">
+          <label>Type any information we need, like if you want a custom wheel size etc etc!</label>
+          <textarea name="freetext" class="form-control" rows="3" id="freetext"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Print!</button>
 
 
     </form>
     </div>
-    {{> footer}}
+    {{> footerIncludes }}
   </body>
 </html>
