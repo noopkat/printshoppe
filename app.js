@@ -9,11 +9,14 @@ module.exports.setupSocket = function setupSocket(iosocket) {
   io.on('connection', function(socket) {
       socket.emit('server ready');
 
+      // job status changed, update db entry for job and then let queue page it's been done
       socket.on('job:change:status', function(data) {
-        console.log('state change for', data.key, 'to', data.status);
+        // testing here
+        //console.log('state change for', data.key, 'to', data.status);
+        // db put
         dataHelpers.changeJobStatus(data.key, data.status, function(err) {
+          // this will ripple UI update to all browser windows with queue open
           socket.broadcast.emit('job:change:status:done', data);
-          console.log(err);
         });
      });
   });
@@ -90,6 +93,7 @@ module.exports.createHandler = function createHandler(request, reply) {
   var payload = request.payload;
   var files = [];
 
+  // pull out thingiverse links and massage into db array format
   for (var key in payload) {
     if (payload.hasOwnProperty(key)) {
       var customPat = new RegExp('custom');
@@ -114,6 +118,7 @@ module.exports.createHandler = function createHandler(request, reply) {
     }
   }
 
+  // make data for db
   var data = {
     'email': payload.email,
     'files': files,
@@ -121,14 +126,11 @@ module.exports.createHandler = function createHandler(request, reply) {
     'status': 'pending'
   };
   
-  // data pulls from request object
+  // create job in db
   dataHelpers.createJob(data, function(err, data) {
-     // check this syntax
-     io.emit('job:new', data);
-     // view is thanks template
+    // emit new job to queue page via socket
+    io.emit('job:new', data);
+    // view is thanks template
     reply.view('thanks', {'message': '~ thanks for using print shoppe ~', 'data': data});
   });
-
-  
-  
 };
