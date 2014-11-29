@@ -3,7 +3,6 @@ var Hapi = require('hapi');
 var https = require('https');
 var config = require('./config');
 var dataHelpers = require('./dataHelpers');
-var notifications = require('./notifications');
 var app = require('./app');
 
 var serverOptions = {
@@ -20,50 +19,12 @@ var serverOptions = {
 
 // Create a server with a host and port
 var server = new Hapi.Server(8000, serverOptions);
-var io = require('socket.io')(server.listener)
-  .on('connection', function(socket) {
-      socket.emit('server ready');
+// create socket
+var io = require('socket.io')(server.listener);
+// create initial socket subscriptions
+app.setupSocket(io);
 
-      socket.on('job:change:status', function(data) {
-        console.log('state change for', data.key, 'to', data.status);
-        dataHelpers.changeJobStatus(data.key, data.status, function(err) {
-          socket.broadcast.emit('job:change:status:done', data);
-          console.log(err);
-        });
-     });
-  });
-
-  
-
-  
-// hit github api and get organisation of authenticated user
-function getOrg(username, fn) {
-
-  var options = {
-    hostname: 'api.github.com',
-    path: '/users/' + username + '/orgs',
-    port : 443,
-    method : 'GET',
-    headers: {'User-Agent': config.userAgent}
-  };
-
-  var reqGet = https.request(options, function(res) {
-    var datastring = '';
-    res.on('data', function(d) {
-        datastring += d;
-    });
-
-    res.on('end', function() {
-      fn(null, JSON.parse(datastring));
-    }); 
-  });
-
-  reqGet.on('error', function(e) {
-    console.error('github is sad: '+e);
-  }); 
-  reqGet.end();
-}
-
+// register hapi plugins for auth
 server.pack.register([require('bell'), require('hapi-auth-cookie')], function (err) {
 
   // bell registration with github auth
@@ -95,40 +56,24 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     }
   });
 
+  // route public images
+  server.route({
+    method: 'GET',
+    path: '/images/{param*}',
+    handler: {
+        directory: {
+            path: 'public/images'
+        }
+    }
+  });
+
   // Add the routes
   server.route({
     method: ['GET', 'POST'], 
     path: '/login',          // callback endpoint registered with github
     config: {
       auth: 'github',
-      handler: function (request, reply) {
-        //console.log(request.auth.credentials);
-        if (!request.auth.isAuthenticated) {
-          return reply('Authentication failed due to: ' + request.auth.error.message);
-        }
-
-        var username = request.auth.credentials.profile.username;
-
-        // make sure the auth'd user is in the printshoppe org, otherwise lock em out
-        getOrg(username, function(e, obj) {
-          if (e) {
-            reply.redirect('/bum');
-          } else  {
-            var partofOrg = obj.filter(function(i) {
-              return i.login === 'printshoppe';
-            }).length;
-
-            if (!!partofOrg) {
-              // set cookie and redirect to app
-              request.auth.session.set({sid: username});
-              reply.redirect('/queue');
-            } else {
-              // tell em to get lost
-              reply.redirect('/bum');
-            }
-          }
-        });
-      }
+      handler: app.loginHandler
     }
   });
 
@@ -137,15 +82,7 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     path: '/queue',
     config: {       
       auth: 'session',
-      handler: function (request, reply) {
-        
-
-        dataHelpers.getAllJobs(function(err, data) {
-          reply.view('queue', {'message': '~ print shoppe queue is here ~', 'data': data});
-
-        });
-        
-      }
+      handler: app.queueHandler
     }
   });
 
@@ -153,69 +90,9 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     method: 'POST',
     path: '/create',
     config: {       
-      handler: function (request, reply) {
-        console.log(request.payload);
-        var payload = request.payload;
-        var files = [];
-
-        for (var key in payload) {
-          if (payload.hasOwnProperty(key)) {
-            var customPat = new RegExp('custom');
-            var customUrlPat = new RegExp('custom[0-9]$');
-            if ((customPat.test(key)) && (payload[key] !== '') && (payload[key] !== '0')) {
-              var idx = parseInt(key.substr(6, 1));
-              var idx2, val;
-              if (customUrlPat.test(key)) {
-                files[idx] = [];
-                var keyval = payload[key];
-                idx2 = 0;
-                var thingPos = keyval.toLowerCase().indexOf('thing:');
-                val = keyval.substr(thingPos);
-                console.log(val);
-              } else {
-                idx2 = 1;
-                val = keyval;
-              }
-              console.log(idx, idx2);
-              files[idx][idx2] = val;
-            }
-          }
-        }
-
-        var data = {
-          'email': payload.email,
-          'files': files,
-          'message': payload.freetext,
-          'status': 'pending'
-        };
-        
-        // data pulls from request object
-        dataHelpers.createJob(data, function(err, data) {
-
-          // view is thanks template
-          reply.view('queue', {'message': '~ print shoppe queue is here ~', 'data': data});
-           // check this syntax
-           io.emit('job:new', data);
-        });
-
-        reply.view('index', {message: '~ thanks for using print shoppe ~'});
-        
-      }
+      handler: app.createHandler
     }
   });
-
-  // server.route({
-  //   method: 'POST',
-  //   path: '/job/change',
-  //   config: {       
-  //     handler: function (request, reply) {
-  //       var payload = request.payload;
-  //       dataHelpers.getAllJobs(function(err, data) {
-  //         reply.view('queue', {'message': '~ print shoppe queue is here ~', 'data': data});
-  //       })
-  //     }
-  //   }
-  // });
 
   server.route({
     method: 'GET',
