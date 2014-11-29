@@ -126,10 +126,31 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     config: {       
       auth: 'session',
       handler: function (request, reply) {
-        reply.view('queue', {message: '~ print shoppe queue is here ~'});
+        dataHelpers.getAllJobs(function(err, data) {
+          reply.view('queue', {'message': '~ print shoppe queue is here ~', 'data': data});
+        });
+        io.on('job:change:status', function(data) {
+          dataHelpers.changeJobStatus(data.key, data.status, function() {
+            console.log('state change for', data.key, 'to', data.status);
+          });
+          
+        });
       }
     }
   });
+
+  // server.route({
+  //   method: 'POST',
+  //   path: '/job/change',
+  //   config: {       
+  //     handler: function (request, reply) {
+  //       var payload = request.payload;
+  //       dataHelpers.getAllJobs(function(err, data) {
+  //         reply.view('queue', {'message': '~ print shoppe queue is here ~', 'data': data});
+  //       })
+  //     }
+  //   }
+  // });
 
   server.route({
     method: 'GET',

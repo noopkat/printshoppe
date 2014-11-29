@@ -36,27 +36,10 @@
       function AppViewModel() {
         var self = this;
 
-        self.jobs = ko.observableArray([
-          { email: 'suz@noopkat.com',
-            files: [ 'thing:13505', 'thing:152484' ],
-            message: 'only the first file for 8903 please',
-            status: 'pending' },
+        console.log({{{data}}});
+        var jobData = {{{data}}};
 
-          { email: 'elijah@noopkat.com',
-            files: [ 'thing:13505', 'thing:152484' ],
-            message: 'all files to be printed',
-            status: 'printing' },
-
-          { email: 'richard@noopkat.com',
-            files: [ 'thing:13505', 'thing:152484' ],
-            message: 'first file of each',
-            status: 'done' },
-
-            { email: 'lisa@noopkat.com',
-              files: [ 'thing:13505', 'thing:152484' ],
-              message: 'second file of each',
-              status: 'cancelled' }     
-        ]); 
+        self.jobs = ko.observableArray(jobData);
 
         socket.on('job:new', function(data) {
           self.jobs.push(data);
@@ -71,7 +54,6 @@
           }
           socket.emit('job:change:status', data);
         });
-
       } 
 
       ko.applyBindings(new AppViewModel());

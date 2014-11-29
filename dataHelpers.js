@@ -13,8 +13,15 @@ module.exports.getAllJobs = function getAllJobs(callback) {
   range(db, 'job~')
     .on('error', callback)
     .pipe(concat(function(buffer) {
-      var jobs = JSON.parse(buffer.toString());
-      callback(null, jobs);
+      var jobs = JSON.parse(JSON.stringify(buffer));
+      var jobsData = [];
+      for (var i = 0; i < jobs.length; i ++) {
+        jobs[i].value.key = jobs[i].key;
+        jobsData.push(
+          jobs[i].value
+        );
+      }
+      callback(null, JSON.stringify(jobsData));
     }));
 }
 
@@ -30,7 +37,7 @@ module.exports.createJob = function createJob(data, callback) {
   }); 
 }
 
-module.exports.changeJobState = function changeJobState(key, state, callback) {
+module.exports.changeJobStatus = function changeJobStatus(key, state, callback) {
   db.putField(key, 'state', state, {}, function(err) {
     callback(err);
   });
