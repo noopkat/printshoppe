@@ -67,6 +67,28 @@ server.pack.register([require('bell'), require('hapi-auth-cookie')], function (e
     }
   });
 
+  // route public css
+  server.route({
+    method: 'GET',
+    path: '/css/{param*}',
+    handler: {
+        directory: {
+            path: 'public/css'
+        }
+    }
+  });
+
+  // route public fonts
+  server.route({
+    method: 'GET',
+    path: '/fonts/{param*}',
+    handler: {
+        directory: {
+            path: 'public/fonts'
+        }
+    }
+  });
+
   // Add the routes
   server.route({
     method: ['GET', 'POST'], 

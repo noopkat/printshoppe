@@ -2,41 +2,51 @@
 <html>
   <head>
     <title>{{title}}</title>
+    {{> headIncludes}}
   </head>
 <body>
-    {{> header}}
-    <div>
-      <p>{{message}}</p>
-    </div>
-    <div>
-      <table>
-        <thead>
-            <tr><th>Email</th><th>Status</th></tr>
-            <tbody data-bind="foreach: jobs">
-              <tr>
-                  <td data-bind="text: email"></td>
-                  <td>
-                    <select class="status" data-bind="value: status, attr: { 'data-key': key, 'class': status }, statusChange: something">
-                      <option>pending</option>
-                      <option>printing</option>
-                      <option>done</option>
-                      <option>cancelled</option>
-                    </select>
-                  </td>
-              </tr>
-          </tbody>
-        </thead>
+    <div class="container">
+    <h1>Print Shoppe Queue</h1>
+    
+      <p>Ordered by ascending time ordered (newest jobs at bottom).</p>
+    
+      <div>
+        <table class="table table-hover table-condensed">
+          <thead>
+              <tr><th>Email</th><th>Files</th><th>Notes</th><th>Status</th></tr>
+              <tbody data-bind="foreach: jobs">
+                <tr>
+                    <td data-bind="text: email"></td>
+                    <td>
+                      <ul data-bind="foreach: { data: files, as: 'file' }">
+                        <li><a href="" data-bind="text: file[0], attr: { 'href': 'http://thingiverse.com/' + file[0] }"></a> x <span data-bind="text: file[1]"></span></li>
+                      </ul>
+                    </td>
+                    <td data-bind="text: message"></td>
+                    <td>
+                      <select class="status" data-bind="value: status, attr: { 'data-key': key, 'class': status }, statusChange: something">
+                        <option>pending</option>
+                        <option>printing</option>
+                        <option>done</option>
+                        <option>cancelled</option>
+                      </select>
+                    </td>
+                </tr>
+            </tbody>
+          </thead>
 
-      </table>
+        </table>
 
-    </div>
-    {{> footer}}
+      </div>
+    </div> <!-- end container -->
 
     <script>var jobData = {{{data}}};</script>
     <script src="/scripts/vendor/jquery-1.11.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts/vendor/knockout-3.2.0.js"></script>
     <script src="/scripts/queue.js"></script>
+
+    {{> footerIncludes}}
 
   </body>
 </html>

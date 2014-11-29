@@ -96,8 +96,10 @@ module.exports.createHandler = function createHandler(request, reply) {
   // pull out thingiverse links and massage into db array format
   for (var key in payload) {
     if (payload.hasOwnProperty(key)) {
+
       var customPat = new RegExp('custom');
       var customUrlPat = new RegExp('custom[0-9]$');
+
       if ((customPat.test(key)) && (payload[key] !== '') && (payload[key] !== '0')) {
         var idx = parseInt(key.substr(6, 1));
         var idx2, val;
@@ -110,7 +112,7 @@ module.exports.createHandler = function createHandler(request, reply) {
           console.log(val);
         } else {
           idx2 = 1;
-          val = keyval;
+          val = payload[key];
         }
         console.log(idx, idx2);
         files[idx][idx2] = val;
@@ -125,6 +127,8 @@ module.exports.createHandler = function createHandler(request, reply) {
     'message': payload.freetext,
     'status': 'pending'
   };
+
+  console.log(data.files);
   
   // create job in db
   dataHelpers.createJob(data, function(err, data) {
