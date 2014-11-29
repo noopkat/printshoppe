@@ -16,30 +16,31 @@ var db = levelup('./ps-db', {valueEncoding: 'json'});
 // // })
 
 db.batch()
-  .put('job~1', {
+  .put('job~01', {
     'email': 'suz@noopkat.com',
-    'files': ['thing:13505', 'thing:152484'],
+    'files': [['thing:13505', 2], ['thing:152484', 1]],
     'message': 'only the first file for 8903 please',
     'status': 'pending'
   })
-  .put('job~2', {
+  .put('job~02', {
     'email': 'elijah@noopkat.com',
-    'files': ['thing:13505', 'thing:152484'],
+    'files': [['thing:13505', 1], ['thing:152484', 6]],
     'message': 'all files to be printed',
     'status': 'printing'
   })
-  .put('job~3', {
+  .put('job~03', {
     'email': 'richard@noopkat.com',
-    'files': ['thing:13505', 'thing:152484'],
+    'files': [['thing:13505', 3], ['thing:152484', 5]],
     'message': 'first file of each',
     'status': 'done'
   })
-  .put('job~4', {
+  .put('job~04', {
     'email': 'lisa@noopkat.com',
-    'files': ['thing:13505', 'thing:152484'],
+    'files': [['thing:13505', 2], ['thing:152484', 2]],
     'message': 'second file of each',
     'status': 'cancelled'
   })
+  .put('~counter', 4)
   .write(function() {
     console.log('Done!');
     db.createReadStream()

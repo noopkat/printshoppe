@@ -31,8 +31,9 @@ module.exports.createJob = function createJob(data, callback) {
     if (newKey < 10) newKey = '0' + newKey;
     console.log('autokey:', newKey);
     key = prefix + newKey;
-    db.putRecord(key, data, function(err) {
-      callback(err);
+    db.put(key, data, function(err) {
+      data.key = newKey;
+      callback(err, data);
     });
   }); 
 }

@@ -7,6 +7,78 @@
     {{> header}}
     <div>
       <p>{{message}}</p>
+      <form id="printform" method="post" action="/create">
+
+       <div class="customitem">
+          <h3>Custom items!</h3>
+        <label>Thingiverse link</label>
+        <input type="text" name="custom0" class="customfile"/>
+        <label>How many?</label>
+        <select name="custom0_quantity">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+        </select>
+      </div>
+
+      <div class="customitem">
+     
+        <label>Thingiverse link</label>
+        <input type="text" name="custom1" class="customfile"/>
+        <label>How many?</label>
+        <select name="custom1_quantity">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+        </select>
+      </div>
+
+      <div class="customitem">
+       
+        <label>Thingiverse link</label>
+        <input type="text" name="custom2" class="customfile"/>
+        <label>How many?</label>
+        <select name="custom2_quantity">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+        </select>
+      </div>
+
+      <hr/>
+
+      <div class="freefield">
+        <label>Your email address (so we can let you know when your order has printed!)</label>
+        <input type="text" class="email" name="email" value="" />
+      </div>
+
+      <div class="freefield">
+        <label>Type any information we need, like if you want a custom wheel size etc etc!</label>
+        <textarea name="freetext" id="freetext"></textarea>
+      </div>
+
+      <input type="submit" value="Print me!"/>
+
+
+    </form>
     </div>
     {{> footer}}
   </body>

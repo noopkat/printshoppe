@@ -32,72 +32,11 @@
     </div>
     {{> footer}}
 
+    <script>var jobData = {{{data}}};</script>
     <script src="/scripts/vendor/jquery-1.11.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts/vendor/knockout-3.2.0.js"></script>
-
-    <script type="text/javascript">
-
-      var socket = io.connect('http://localhost:8000');
-
-      socket.on('job:change:status:done', function(data) {
-        console.log('appviewmodel status change');
-
-        this.currentJob = ko.computed(function() {
-          return ko.utils.arrayFilter(model.jobs(), function(Job) {
-            return Job.key === data.index;
-          });
-        });
-
-        this.currentJob()[0].status(data.status);
-
-      });
-
-      function AppViewModel() {
-        var self = this;
-
-        var jobData = {{{data}}};
-        console.log(jobData);
-        var observableList = []; 
-
-        for (var i = 0; i < jobData.length; i ++) {
-          var status = jobData[i].status;
-          jobData[i].status = ko.observable(status); 
-          observableList.push(jobData[i]); 
-        }
-            
-        self.jobs = ko.observableArray(observableList);
-
-        socket.on('job:new', function(data) {
-          self.jobs.push(data);
-        });
-
-        ko.bindingHandlers.statusChange = {
-          init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-            var statusInput = $(element);
-            //console.log('binding change status');
-           
-            statusInput.change(function() {
-              var data = {
-                'index': $(this).attr('data-key'),
-                'key': 'job~' + $(this).attr('data-key'),
-                'status': $(this).val()
-              }
-              //console.log('change status', data);
-              socket.emit('job:change:status', data);
-            });
-              
-          }
-        };
-
-      } 
-
-      var model = new AppViewModel();
-      console.log(model);
-
-      ko.applyBindings(model);
-
-    </script>
+    <script src="/scripts/queue.js"></script>
 
   </body>
 </html>
