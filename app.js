@@ -120,8 +120,11 @@ module.exports.createHandler = function createHandler(request, reply) {
     }
   }
 
+  var date = Date.now();
+
   // make data for db
   var data = {
+    'date': date.toString(),
     'email': payload.email,
     'files': files,
     'message': payload.freetext,

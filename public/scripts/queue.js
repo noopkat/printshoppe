@@ -16,18 +16,24 @@
     var observableList = []; 
 
     for (var i = 0; i < jobData.length; i ++) {
+      var date = parseInt(jobData[i].date);
+      jobData[i].humanDate = new Date(date);
       var status = jobData[i].status;
       // make status observable
       jobData[i].status = ko.observable(status); 
       observableList.push(jobData[i]); 
     }
+
+    console.log(jobData);
         
     self.jobs = ko.observableArray(observableList);
 
     socket.on('job:new', function(data) {
+      var date = parseInt(data.date);
       var status = data.status;
       // make status observable
       data.status = ko.observable(status);
+      data.humanDate = new Date(date);
       self.jobs.push(data);
     });
 
@@ -47,6 +53,12 @@
           
       }
     };
+
+  //     ko.bindingHandlers.dateParse = {
+  //     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+  //         var value = valueAccessor();
+  //     }
+  // };
 
   } 
 
