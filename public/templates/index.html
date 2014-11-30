@@ -7,15 +7,16 @@
 <body>
   <div class="container">
     {{> header}}
-      <p>{{message}}</p>
-      <form role="form" id="printform" method="post" action="/create">
-        <h3>What can we print for you?</h3>
 
-       
-            
+      <p>{{message}}</p>
+      <h3>What can we print for you?</h3>
+
+
+      <form role="form" id="printform" method="post" action="/create">
+      
         <div class="form-group">
-          <label for="custom0">Thingiverse link</label>
-          <input type="text" name="custom0" id="custom0" class="customfile form-control" />
+          <label for="custom0">Thingiverse link (eg. http://www.thingiverse.com/thing:561669)</label>
+          <input type="text" name="custom0" id="custom0" class="customfile form-control has-error" url/>
 
           <label for="custom0_quantity">How many?</label>
           <select name="custom0_quantity" id="custom0_quantity">
@@ -24,17 +25,13 @@
             <option>2</option>
             <option>3</option>
             <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
           </select>
         </div>
 
         
         <div class="form-group">
-          <label>Thingiverse link</label>
-          <input type="text" name="custom1" class="customfile form-control"/>
+          <label>Thingiverse link  (eg. http://www.thingiverse.com/thing:561669)</label>
+          <input type="url" name="custom1" class="customfile form-control has-error"/>
 
           <label>How many?</label>
           <select name="custom1_quantity">
@@ -43,17 +40,13 @@
             <option>2</option>
             <option>3</option>
             <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
           </select>
         </div>
 
       
         <div class="form-group">
-          <label>Thingiverse link</label>
-          <input type="text" name="custom2" class="customfile form-control"/>
+          <label>Thingiverse link  (eg. http://www.thingiverse.com/thing:561669)</label>
+          <input type="url" name="custom2" class="customfile form-control has-error"/>
 
           <label>How many?</label>
           <select name="custom2_quantity">
@@ -62,26 +55,21 @@
             <option>2</option>
             <option>3</option>
             <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
           </select>
         </div>
 
       
         <div class="form-group">
           <label>Your email address (so we can let you know when your order has printed!)</label>
-          <input type="text" class="email form-control" name="email" value="" />
+          <input type="email" class="email form-control" name="email" value="" required/>
         </div>
 
         <div class="form-group">
-          <label>Type any information we need, like if you want a custom wheel size etc etc!</label>
+          <label>Type any information we need, like if you only want certain files within a thingiverse object, etc</label>
           <textarea name="freetext" class="form-control" rows="3" id="freetext"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Print!</button>
-
+        <button type="submit" class="btn btn-primary btn-lg">Print!</button>
 
     </form>
     </div>

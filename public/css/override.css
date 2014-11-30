@@ -20,5 +20,10 @@ ul {
 }
 
 #printform {
+  padding-top: 20px;
   width: 800px;
+}
+
+#printform .form-group {
+  padding-bottom: 20px;
 }
