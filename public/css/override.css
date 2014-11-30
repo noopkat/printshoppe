@@ -1,16 +1,16 @@
-.done {
+select.done {
   background-color: #dff0d8;
 }
 
-.printing {
+select.printing {
   background-color: #d9edf7;
 }
 
-.pending {
+select.pending {
   background-color: #fff;
 }
 
-.cancelled {
+select.cancelled {
   background-color: #f2dede;
 }
 
@@ -26,4 +26,8 @@ ul {
 
 #printform .form-group {
   padding-bottom: 20px;
+}
+
+.hide {
+  display: none;
 }

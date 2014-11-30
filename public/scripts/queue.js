@@ -37,6 +37,11 @@
       self.jobs.push(data);
     });
 
+    self.hide = function(status) {
+      $('.'+status).toggle();
+    }
+
+
     ko.bindingHandlers.statusChange = {
       init: function(element) {
         var statusInput = $(element);
@@ -54,13 +59,7 @@
       }
     };
 
-  //     ko.bindingHandlers.dateParse = {
-  //     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-  //         var value = valueAccessor();
-  //     }
-  // };
-
-  } 
+  }
 
   var model = new AppViewModel();
   ko.applyBindings(model);

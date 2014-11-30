@@ -1,7 +1,7 @@
 var levelup = require('levelup');
 var db = levelup('./ps-db', {valueEncoding: 'json'});
 
-/* just createing test data to play with */
+/* just creating test data to play with */
 
 db.batch()
   .put('job~01', {
