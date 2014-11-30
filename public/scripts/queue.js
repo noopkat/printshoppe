@@ -17,6 +17,7 @@
 
     for (var i = 0; i < jobData.length; i ++) {
       var status = jobData[i].status;
+      // make status observable
       jobData[i].status = ko.observable(status); 
       observableList.push(jobData[i]); 
     }
@@ -24,7 +25,9 @@
     self.jobs = ko.observableArray(observableList);
 
     socket.on('job:new', function(data) {
-      console.log('new job emitted');
+      var status = data.status;
+      // make status observable
+      data.status = ko.observable(status);
       self.jobs.push(data);
     });
 
