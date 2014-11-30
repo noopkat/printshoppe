@@ -23,7 +23,7 @@ module.exports.setupSocket = function setupSocket(iosocket) {
 };
 
 // hit github api and get organisation of authenticated user
-module.exports.getOrg = function getOrg(username, fn) {
+function getOrg(username, fn) {
 
   var options = {
     hostname: 'api.github.com',
@@ -65,7 +65,7 @@ module.exports.loginHandler = function loginHandler(request, reply) {
       reply.redirect('/bum');
     } else  {
       var partofOrg = obj.filter(function(i) {
-        return i.login === 'printshoppe';
+        return i.login === config.orgName;
       }).length;
 
       if (!!partofOrg) {
@@ -109,12 +109,12 @@ module.exports.createHandler = function createHandler(request, reply) {
           idx2 = 0;
           var thingPos = keyval.toLowerCase().indexOf('thing:');
           val = keyval.substr(thingPos);
-          console.log(val);
+          //console.log(val);
         } else {
           idx2 = 1;
           val = payload[key];
         }
-        console.log(idx, idx2);
+        //console.log(idx, idx2);
         files[idx][idx2] = val;
       }
     }
@@ -130,8 +130,6 @@ module.exports.createHandler = function createHandler(request, reply) {
     'message': payload.freetext,
     'status': 'pending'
   };
-
-  console.log(data.files);
   
   // create job in db
   dataHelpers.createJob(data, function(err, data) {
