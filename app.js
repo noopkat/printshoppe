@@ -32,7 +32,7 @@ module.exports.setupSocket = function setupSocket(iosocket) {
       dataHelpers.changeNotifyStatus(data.key, true, function(err) {
         console.log('notified change for', data.key, 'to true');
         // this will ripple UI update to all browser windows with queue open
-        socket.emit('job:notify:done', data);
+        socket.broadcast.emit('job:notify:done', data);
       });
     });
 

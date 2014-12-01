@@ -81,8 +81,15 @@
         'email': job.email
       };
 
-      console.log('Im emitting job notify');
       socket.emit('job:notify', data);
+
+      var currentJob = ko.computed(function() {
+        return ko.utils.arrayFilter(model.jobs(), function(Job) {
+          return Job.key === data.index;
+        });
+      });
+
+      currentJob()[0].notified(true);
     };
 
   }
