@@ -31,3 +31,7 @@ ul {
 .hide {
   display: none;
 }
+
+.toggles {
+  text-align: right;
+}

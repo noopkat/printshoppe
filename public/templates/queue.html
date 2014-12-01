@@ -8,11 +8,13 @@
     <div class="container">
     <h1>Print Shoppe Queue</h1>
     
-      <p>Ordered by ascending time ordered (newest jobs at bottom).</p>
+      <p>This page is live updating, no need to refresh.</p>
     
       <div>
-        <a href="#" data-bind="click: hide('cancelled')">Toggle cancelled</a> | 
-        <a href="#" data-bind="click: hide('done')">Toggle done</a>
+        <p class="toggles">
+          <a href="#" class="btn btn-default btn-xs" data-bind="click: toggle('cancelled')">Toggle cancelled</a> 
+          <a href="#" class="btn btn-default btn-xs" data-bind="click: toggle('done')">Toggle done</a>
+        </p>
         <table class="table table-hover table-condensed">
           <thead>
               <tr>
@@ -21,6 +23,7 @@
                 <th>Files</th>
                 <th>Notes</th>
                 <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'status'}">Status<a></th>
+                <th>Notified?</th>
               </tr>
               <tbody data-bind="foreach: jobs">
                 <tr data-bind="attr: { 'class': status }">
@@ -28,7 +31,10 @@
                     <td data-bind="text: email"></td>
                     <td>
                       <ul data-bind="foreach: { data: files, as: 'file' }">
-                        <li><a href="" data-bind="text: file[0], attr: { 'href': 'http://thingiverse.com/' + file[0] }"></a> x <span data-bind="text: file[1]"></span></li>
+                        <li>
+                          <a href="" data-bind="text: file[0], attr: { 'href': 'http://thingiverse.com/' + file[0] }"></a> x 
+                          <span data-bind="text: file[1]"></span>
+                        </li>
                       </ul>
                     </td>
                     <td data-bind="text: message"></td>
@@ -39,6 +45,10 @@
                         <option>done</option>
                         <option>cancelled</option>
                       </select>
+                    </td>
+                    <td>
+                      <a href="#" class="notify" data-bind="click: $parent.notifyByEmail, visible: (notified() == false)">Notify via email</a>
+                      <span data-bind="visible: notified">Yes</span>
                     </td>
                 </tr>
             </tbody>

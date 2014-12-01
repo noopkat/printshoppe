@@ -48,6 +48,17 @@ module.exports.changeJobStatus = function changeJobStatus(key, status, callback)
   });
 }
 
+module.exports.changeNotifyStatus = function updateNotifyStatus(key, bool, callback) {
+  var bool = bool;
+  db.get(key, function(err, data) {
+    if (err) callback(err);
+    data.notified = bool;
+    db.put(key, data, function(err) {
+      callback(err);
+    })
+  });
+}
+
 function editJob(callback) {
   
 }

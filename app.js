@@ -1,6 +1,9 @@
 var config = require('./config');
 var https = require('https');
+var request = require('request');
 var dataHelpers = require('./dataHelpers');
+var api_key = config.mailgunOpts.pass;
+var mailgun = require('mailgun-js')({apiKey: config.mailgunOpts.pass, domain: config.mailgunOpts.domain});
 var io;
 
 // set up access to socket and initial socket subs
@@ -19,6 +22,22 @@ module.exports.setupSocket = function setupSocket(iosocket) {
           socket.broadcast.emit('job:change:status:done', data);
         });
      });
+
+    // job status changed, update db entry for job and then let queue page it's been done
+    socket.on('job:notify', function(data) {
+      // testing here
+      
+      sendEmail(data.email);
+      // db put
+      dataHelpers.changeNotifyStatus(data.key, true, function(err) {
+        console.log('notified change for', data.key, 'to true');
+        // this will ripple UI update to all browser windows with queue open
+        socket.emit('job:notify:done', data);
+      });
+    });
+
+
+
   });
 };
 
@@ -49,6 +68,22 @@ function getOrg(username, fn) {
   }); 
   reqGet.end();
 };
+
+
+function sendEmail(email) {
+
+  var data = {
+    from: config.mailgunOpts.from,
+    to: email,
+    subject: 'your print is ready!',
+    text: 'Hi there, your requested print job is ready, feel free to come collect it when convenient. \n\nThanks!'
+  };
+
+  mailgun.messages().send(data, function (error, body) {
+    console.log(body);
+  });
+
+}
 
 // /login handler for view
 module.exports.loginHandler = function loginHandler(request, reply) {
@@ -128,7 +163,8 @@ module.exports.createHandler = function createHandler(request, reply) {
     'email': payload.email,
     'files': files,
     'message': payload.freetext,
-    'status': 'pending'
+    'status': 'pending',
+    'notified': false
   };
   
   // create job in db

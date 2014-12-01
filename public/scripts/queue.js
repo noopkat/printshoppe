@@ -11,6 +11,17 @@
     this.currentJob()[0].status(data.status);
   });
 
+  socket.on('job:notify:done', function(data) {
+    console.log('got confirmation of notify change and email sent');
+    this.currentJob = ko.computed(function() {
+      return ko.utils.arrayFilter(model.jobs(), function(Job) {
+        return Job.key === data.index;
+      });
+    });
+
+    this.currentJob()[0].notified(true);
+  });
+
   function AppViewModel() {
     var self = this;
     var observableList = []; 
@@ -19,8 +30,10 @@
       var date = parseInt(jobData[i].date);
       jobData[i].humanDate = new Date(date);
       var status = jobData[i].status;
+      var notified = jobData[i].notified;
       // make status observable
       jobData[i].status = ko.observable(status); 
+      jobData[i].notified = ko.observable(notified); 
       observableList.push(jobData[i]); 
     }
 
@@ -31,16 +44,17 @@
     socket.on('job:new', function(data) {
       var date = parseInt(data.date);
       var status = data.status;
+      var notified = data.notified;
       // make status observable
       data.status = ko.observable(status);
       data.humanDate = new Date(date);
+      data.notified = ko.observable(notified);
       self.jobs.push(data);
     });
 
-    self.hide = function(status) {
+    self.toggle = function(status) {
       $('.'+status).toggle();
     }
-
 
     ko.bindingHandlers.statusChange = {
       init: function(element) {
@@ -51,12 +65,24 @@
             'index': $(this).attr('data-key'),
             'key': 'job~' + $(this).attr('data-key'),
             'status': $(this).val()
-          }
+          };
 
           socket.emit('job:change:status', data);
         });
           
       }
+    };
+
+    self.notifyByEmail = function(job) {
+      console.log(job.key, job.email);
+      var data = {
+        'index': job.key,
+        'key': 'job~' + job.key,
+        'email': job.email
+      };
+
+      console.log('Im emitting job notify');
+      socket.emit('job:notify', data);
     };
 
   }
