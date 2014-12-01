@@ -4,12 +4,12 @@
     <title>{{title}}</title>
     {{> headIncludes}}
   </head>
-<body>
+  <body>
     <div class="container">
-    <h1>Print Shoppe Queue</h1>
+      <h1>Print Shoppe Queue</h1>
     
       <p>This page is live updating, no need to refresh.</p>
-    
+  
       <div>
         <p class="toggles">
           <a href="#" class="btn btn-default btn-xs" data-bind="click: toggle('cancelled')">Toggle cancelled</a> 
@@ -17,40 +17,40 @@
         </p>
         <table class="table table-hover table-condensed">
           <thead>
-              <tr>
-                <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'date'}">Date</a></th>
-                <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'email'}">Email</a></th>
-                <th>Files</th>
-                <th>Notes</th>
-                <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'status'}">Status<a></th>
-                <th>Notified?</th>
+            <tr>
+              <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'date'}">Date</a></th>
+              <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'email'}">Email</a></th>
+              <th>Files</th>
+              <th>Notes</th>
+              <th><a href="#" data-bind="orderable: {collection: 'jobs', field: 'status'}">Status<a></th>
+              <th>Notified?</th>
+            </tr>
+            <tbody data-bind="foreach: jobs">
+              <tr data-bind="attr: { 'class': status }">
+                  <td><span data-bind="attr: { 'data-livestamp': humanDate }"></span></td>
+                  <td data-bind="text: email"></td>
+                  <td>
+                    <ul data-bind="foreach: { data: files, as: 'file' }">
+                      <li>
+                        <a href="#" class="tooltipp" data-toggle="tooltip" data-html="true" data-placement="top" data-bind="text: 'thing:' + file[0], attr: { 'href': 'http://thingiverse.com/thing:' + file[0] }, tooltip: { 'title': '&lt;img src=&quot;' + file[2] +'&quot;/&gt;', 'trigger': 'hover', 'placement': 'left' }"></a> x 
+                        <span data-bind="text: file[1]"></span>
+                      </li>
+                    </ul>
+                  </td>
+                  <td data-bind="text: message"></td>
+                  <td>
+                    <select class="status" data-bind="value: status, attr: { 'data-key': key, 'class': status }, statusChange">
+                      <option>pending</option>
+                      <option>printing</option>
+                      <option>done</option>
+                      <option>cancelled</option>
+                    </select>
+                  </td>
+                  <td>
+                    <a href="#" class="notify" data-toggle="" data-target="#myModal" data-bind="click: $parent.notifyByEmail, visible: (notified() == false)">Notify via email</a>
+                    <span data-bind="visible: notified">Yes</span>
+                  </td>
               </tr>
-              <tbody data-bind="foreach: jobs">
-                <tr data-bind="attr: { 'class': status }">
-                    <td><span data-bind="attr: { 'data-livestamp': humanDate }"></span></td>
-                    <td data-bind="text: email"></td>
-                    <td>
-                      <ul data-bind="foreach: { data: files, as: 'file' }">
-                        <li>
-                          <a href="" data-bind="text: file[0], attr: { 'href': 'http://thingiverse.com/' + file[0] }"></a> x 
-                          <span data-bind="text: file[1]"></span>
-                        </li>
-                      </ul>
-                    </td>
-                    <td data-bind="text: message"></td>
-                    <td>
-                      <select class="status" data-bind="value: status, attr: { 'data-key': key, 'class': status }, statusChange">
-                        <option>pending</option>
-                        <option>printing</option>
-                        <option>done</option>
-                        <option>cancelled</option>
-                      </select>
-                    </td>
-                    <td>
-                      <a href="#" class="notify" data-bind="click: $parent.notifyByEmail, visible: (notified() == false)">Notify via email</a>
-                      <span data-bind="visible: notified">Yes</span>
-                    </td>
-                </tr>
             </tbody>
           </thead>
 
@@ -59,16 +59,34 @@
       </div>
     </div> <!-- end container -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel">Notify?</h4>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to send this person an email?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary">Yep, notify them!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>var jobData = {{{data}}};</script>
     <script src="/scripts/vendor/jquery-1.11.1.min.js"></script>
+    {{> footerIncludes}}
     <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts/vendor/knockout-3.2.0.js"></script>
     <script src="/scripts/vendor/knockout.bindings.orderable.js"></script>
     <script src="/scripts/vendor/moment.min.js"></script>
     <script src="/scripts/vendor/livestamp.min.js"></script>
     <script src="/scripts/queue.js"></script>
-
-    {{> footerIncludes}}
-
+   
   </body>
 </html>

@@ -1,9 +1,11 @@
 var config = require('./config');
 var https = require('https');
+var imageRequest = require('request').defaults({ encoding: null });
 var request = require('request');
 var dataHelpers = require('./dataHelpers');
 var api_key = config.mailgunOpts.pass;
 var mailgun = require('mailgun-js')({apiKey: config.mailgunOpts.pass, domain: config.mailgunOpts.domain});
+var async = require('async');
 var io;
 
 // set up access to socket and initial socket subs
@@ -41,8 +43,46 @@ module.exports.setupSocket = function setupSocket(iosocket) {
   });
 };
 
+function encodeImage(url, callback) {
+  imageRequest.get(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+        data = "data:" + response.headers["content-type"] + ";base64," + body.toString('base64');
+        callback(data);
+    }
+  });
+}
+
+function getThingiverseThumbnail(id, callback) {
+
+  var options = {
+    hostname: 'api.thingiverse.com',
+    path: '/things/' + id + '?access_token=' + config.thingiverseOpts.token,
+    port : 443,
+    method : 'GET',
+    headers: {'User-Agent': config.userAgent}
+  };
+
+  var reqGet = https.request(options, function(res) {
+    var datastring = '';
+    res.on('data', function(d) {
+        datastring += d;
+    });
+
+    res.on('end', function() {
+      console.log(JSON.parse(datastring).thumbnail);
+      callback(null, JSON.parse(datastring).thumbnail);
+    }); 
+  });
+
+  reqGet.on('error', function(e) {
+    console.error('github is sad: '+e);
+  }); 
+  reqGet.end();
+
+}
+
 // hit github api and get organisation of authenticated user
-function getOrg(username, fn) {
+function getOrg(username, callback) {
 
   var options = {
     hostname: 'api.github.com',
@@ -59,7 +99,7 @@ function getOrg(username, fn) {
     });
 
     res.on('end', function() {
-      fn(null, JSON.parse(datastring));
+      callback(null, JSON.parse(datastring));
     }); 
   });
 
@@ -127,6 +167,7 @@ module.exports.createHandler = function createHandler(request, reply) {
   console.log(request.payload);
   var payload = request.payload;
   var files = [];
+  var date = Date.now();
 
   // pull out thingiverse links and massage into db array format
   for (var key in payload) {
@@ -137,41 +178,52 @@ module.exports.createHandler = function createHandler(request, reply) {
 
       if ((customPat.test(key)) && (payload[key] !== '') && (payload[key] !== '0')) {
         var idx = parseInt(key.substr(6, 1));
-        var idx2, val;
+        var idx2, val, b64;
         if (customUrlPat.test(key)) {
           files[idx] = [];
           var keyval = payload[key];
           idx2 = 0;
           var thingPos = keyval.toLowerCase().indexOf('thing:');
-          val = keyval.substr(thingPos);
-          //console.log(val);
+          val = keyval.substr(thingPos + 6);
         } else {
           idx2 = 1;
           val = payload[key];
         }
-        //console.log(idx, idx2);
         files[idx][idx2] = val;
       }
     }
   }
 
-  var date = Date.now();
-
-  // make data for db
-  var data = {
-    'date': date.toString(),
-    'email': payload.email,
-    'files': files,
-    'message': payload.freetext,
-    'status': 'pending',
-    'notified': false
-  };
-  
-  // create job in db
-  dataHelpers.createJob(data, function(err, data) {
-    // emit new job to queue page via socket
-    io.emit('job:new', data);
-    // view is thanks template
-    reply.view('thanks', {'message': '~ thanks for using print shoppe ~', 'data': data});
+  // get thingiverse thumbnails asynchronously
+  async.each(files,
+  function(file, callback){
+    getThingiverseThumbnail(file[0], function(error, data) {
+      encodeImage(data, function(b64string) {
+        //console.log(b64string);
+        file.push(b64string);
+        callback();
+      })
+    })
+  },
+  // all thumbnails gotten
+  function(err){
+    // make data for db
+    var data = {
+      'date': date.toString(),
+      'email': payload.email,
+      'files': files,
+      'message': payload.freetext,
+      'status': 'pending',
+      'notified': false
+    };
+    
+    // create job in db
+    dataHelpers.createJob(data, function(err, data) {
+      // emit new job to queue page via socket
+      io.emit('job:new', data);
+      // view is thanks template
+      reply.view('thanks', {'message': '~ thanks for using print shoppe ~', 'data': data});
+    });
   });
+
 };

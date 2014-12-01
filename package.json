@@ -4,6 +4,7 @@
   "author": "Suz Hinton <suz@noopkat.com>",
   "dependencies": {
     "JSONStream": "^0.10.0",
+    "async": "^0.9.0",
     "bell": "~1.1.0",
     "browserify": ">= 0.1.0",
     "concat-stream": "^1.4.7",
