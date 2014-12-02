@@ -7,7 +7,7 @@ select.printing {
 }
 
 select.pending {
-  background-color: #fff;
+  background-color: #fffffe;
 }
 
 select.cancelled {
