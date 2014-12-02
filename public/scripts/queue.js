@@ -1,5 +1,6 @@
 (function() {
-  var socket = io.connect('http://localhost:8000');
+  var listen = window.location.origin || (window.location.protocol + '//' + window.location.hostname + ':' + window.location.port);
+  var socket = io.connect(listen);
 
   socket.on('job:change:status:done', function(data) {
     this.currentJob = ko.computed(function() {
