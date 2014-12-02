@@ -35,3 +35,11 @@ ul {
 .toggles {
   text-align: right;
 }
+
+h1 {
+  font-size: 60px;
+  font-family: 'Pacifico', cursive;
+  color: #3FB8AF;
+  text-shadow: 1px 1px 2px #216c67;
+  margin-bottom: 30px;
+}
